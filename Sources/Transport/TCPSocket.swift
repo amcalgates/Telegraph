@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import DWCocoaAsyncSocket
+import CocoaAsyncSocket
 
 // MARK: TCPSocketClose
 

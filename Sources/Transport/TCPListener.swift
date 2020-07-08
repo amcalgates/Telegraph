@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import DWCocoaAsyncSocket
+import CocoaAsyncSocket
 
 public protocol TCPListenerDelegate: class {
   /// Called when the listener accepts a new incoming socket
