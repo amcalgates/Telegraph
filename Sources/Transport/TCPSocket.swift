@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import CocoaAsyncSocket
+import DWCocoaAsyncSocket
 
 // MARK: TCPSocketClose
 
@@ -36,21 +36,21 @@ public final class TCPSocket: NSObject {
   /// The delegate to handle socket events.
   public weak var delegate: TCPSocketDelegate?
 
-  private let socket: GCDAsyncSocket
+  private let socket: DWGCDAsyncSocket
   private let tlsPolicy: TLSPolicy?
 
   /// Creates a socket to connect to an endpoint.
   public init(endpoint: Endpoint, tlsPolicy: TLSPolicy? = nil) {
     self.endpoint = endpoint
     self.tlsPolicy = tlsPolicy
-    self.socket = GCDAsyncSocket()
+    self.socket = DWGCDAsyncSocket()
 
     defer { socket.delegate = self }
     super.init()
   }
 
-  /// Creates a socket by wrapping an existing GCDAsyncSocket.
-  internal init(wrapping socket: GCDAsyncSocket) {
+  /// Creates a socket by wrapping an existing DWGCDAsyncSocket.
+  internal init(wrapping socket: DWGCDAsyncSocket) {
     self.endpoint = Endpoint(host: socket.localHost ?? "", port: socket.localPort)
     self.tlsPolicy = nil
     self.socket = socket
@@ -132,7 +132,7 @@ public final class TCPSocket: NSObject {
 
     // When a TLS policy is set, enable manual trust evaluation
     if tlsPolicy != nil {
-      rawConfig[GCDAsyncSocketManuallyEvaluateTrust] = true as CFBoolean
+      rawConfig[DWGCDAsyncSocketManuallyEvaluateTrust] = true as CFBoolean
     }
 
     socket.startTLS(rawConfig)
@@ -158,29 +158,29 @@ extension TCPSocket: ReadStream, WriteStream {
 
 // MARK: GCDAsyncSocketDelegate implementation
 
-extension TCPSocket: GCDAsyncSocketDelegate {
+extension TCPSocket: DWGCDAsyncSocketDelegate {
   /// Raised when the socket has connected to the host.
-  public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
+  public func socket(_ sock: DWGCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
     delegate?.socketDidOpen(self)
   }
 
   /// Raised when the socket has disconnected from the host.
-  public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
+  public func socketDidDisconnect(_ sock: DWGCDAsyncSocket, withError err: Error?) {
     delegate?.socketDidClose(self, error: err)
   }
 
   /// Raised when the socket is done reading data.
-  public func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
+  public func socket(_ sock: DWGCDAsyncSocket, didRead data: Data, withTag tag: Int) {
     delegate?.socketDidRead(self, data: data, tag: tag)
   }
 
   /// Raised when the socket is done writing data.
-  public func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: Int) {
+  public func socket(_ sock: DWGCDAsyncSocket, didWriteDataWithTag tag: Int) {
     delegate?.socketDidWrite(self, tag: tag)
   }
 
   /// Raised when the socket is asking to evaluate the trust as part of the TLS handshake.
-  public func socket(_ sock: GCDAsyncSocket, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Void) {
+  public func socket(_ sock: DWGCDAsyncSocket, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Void) {
     let trusted = tlsPolicy?.evaluate(trust: trust) ?? false
     completionHandler(trusted)
   }

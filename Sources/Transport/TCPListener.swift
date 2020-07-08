@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import CocoaAsyncSocket
+import DWCocoaAsyncSocket
 
 public protocol TCPListenerDelegate: class {
   /// Called when the listener accepts a new incoming socket
@@ -28,12 +28,12 @@ public final class TCPListener: NSObject {
   public let tlsConfig: TLSConfig?
 
   private let listenerPort: UInt16
-  private var listenerSocket: GCDAsyncSocket
+  private var listenerSocket: DWGCDAsyncSocket
 
   /// Creates a listener that listens on the provided port and interface.
   public init(port: Endpoint.Port, interface: String? = nil, tlsConfig: TLSConfig? = nil) {
     self.listenerPort = UInt16(port)
-    self.listenerSocket = GCDAsyncSocket()
+    self.listenerSocket = DWGCDAsyncSocket()
     self.interface = interface
     self.tlsConfig = tlsConfig
 
@@ -70,9 +70,9 @@ public final class TCPListener: NSObject {
 
 // MARK: GCDAsyncSocketDelegate implementation
 
-extension TCPListener: GCDAsyncSocketDelegate {
+extension TCPListener: DWGCDAsyncSocketDelegate {
   /// Raised when the socket accepts a new incoming client socket.
-  public func socket(_ sock: GCDAsyncSocket, didAcceptNewSocket newSocket: GCDAsyncSocket) {
+  public func socket(_ sock: DWGCDAsyncSocket, didAcceptNewSocket newSocket: DWGCDAsyncSocket) {
     let socket = TCPSocket(wrapping: newSocket)
 
     // Is this a secure connection?
@@ -84,7 +84,7 @@ extension TCPListener: GCDAsyncSocketDelegate {
   }
 
   /// Raised when the socket disconnects.
-  public func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: Error?) {
+  public func socketDidDisconnect(_ sock: DWGCDAsyncSocket, withError err: Error?) {
     delegate?.listenerDisconnected(self, error: err)
   }
 }
