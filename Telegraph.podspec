@@ -20,6 +20,5 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '9.0'
   s.osx.deployment_target = '10.10'
 
-  s.dependency 'CocoaAsyncSocket', :git => 'https://github.com/amcalgates/CocoaAsyncSocket'
   s.dependency 'HTTPParserC', '~> 2.7'
 end
